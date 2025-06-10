@@ -1,0 +1,91 @@
+<?php
+
+class Pagination {
+
+  private $num_pages = 1;
+  private $start = 0;
+  private $display;
+  private $start_display;
+
+  function __construct ($query, $display=10) {
+    if (!empty($query)) {
+      $this->display = $display;
+      if (isset($_GET['display']) && is_numeric($_GET['display'])) $this->display = (int) $_GET['display'];
+      if (isset($_GET['np']) && is_numeric($_GET['np']) && $_GET['np'] > 0) { 
+        $this->num_pages = (int) $_GET['np'];
+      } else {
+        if (is_numeric($query)) {
+          $num_records = $query;
+        } else {
+          $result = db_query ($query);
+          if ($result->num_rows > 1 || strstr($query, 'COUNT') === false) {
+            $num_records = $result->num_rows;
+          } else {
+            $row = $result->fetch_row();
+            $num_records = $row[0];
+          }
+        }
+        if ($num_records > $this->display) $this->num_pages = ceil ($num_records/$this->display);
+      } 
+      if (isset($_GET['s']) && is_numeric($_GET['s']) && $_GET['s'] > 0) $this->start = (int) $_GET['s'];
+      $this->start_display = " LIMIT {$this->start}, {$this->display}";
+    }
+  }
+
+  public function display ($split=5) {
+    global $page;
+    $html = '';
+    if ($this->num_pages <= 1) return $html;
+    // $page->link('pagination.css');
+    $url = $page->url ('add', '', 'np', $this->num_pages);
+    $current_page = ($this->start/$this->display) + 1;
+    $begin = $current_page - $split;
+    $end = $current_page + $split;
+    if ($begin < 1) {
+      $begin = 1;
+      $end = $split * 2;
+    }
+    if ($end > $this->num_pages) {
+      $end = $this->num_pages;
+      $begin = $end - ($split * 2);
+      $begin++; // add one so that we get double the split at the end
+      if ($begin < 1) $begin = 1;
+    }
+    if ($current_page != 1) {
+      $html .= '<li><a class="first" title="First" href="' . $page->url('add', $url, 's', 0) . '">&laquo;</a></li>';
+      $html .= '<li><a class="prev" title="Previous" href="' . $page->url('add', $url, 's', $this->start - $this->display) . '">Previous</a></li>';
+    } else {
+      //$html .= '<span class="disabled first" title="First">&laquo;</span>';
+      //$html .= '<span class="disabled prev" title="Previous">Previous</span>';
+      $html .= '<li class="disabled" title="First"><span>&laquo;</span></li>';
+      $html .= '<li class="disabled" title="Prev"><span>Prev</span></li>';
+    }
+    for ($i=$begin; $i<=$end; $i++) {
+      if ($i != $current_page) {
+        $html .= '<li><a title="' . $i . '" href="' . $page->url('add', $url, 's', ($this->display * ($i - 1))) . '">' . $i . '</a></li>';
+      } else {
+        //$html .= '<span class="current">' . $i . '</span>';
+        $html .= '<li class="active"><span>' . $i . '</span></li>';
+      }
+    }
+    if ($current_page != $this->num_pages) {
+      $html .= '<li><a class="next" title="Next" href="' . $page->url('add', $url, 's', $this->start + $this->display) . '">Next</a></li>';
+      $last = ($this->num_pages * $this->display) - $this->display;
+      $html .= '<li><a class="last" title="Last" href="' . $page->url('add', $url, 's', $last) . '">&raquo;</a></li>';
+    } else {
+      //$html .= '<span class="disabled next" title="Next">Next</span>';
+      //$html .= '<span class="disabled last" title="Last">&raquo;</span>';
+      $html .= '<li class="disabled" title="Next"><span>Next</span></li>';
+      $html .= '<li class="disabled" title="Last"><span>&raquo;</span></li>';
+    }
+    //return '<div class="pagination">' . $html . '</div>';
+	return $html;
+  }
+
+  public function limit () {
+    return $this->start_display;
+  }
+
+}
+
+?>

@@ -1,0 +1,169 @@
+{
+    "_D": "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2",
+    "_A": "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2",
+    "_B": "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2",
+    "Invoice": [
+        {
+            "ID": "T18153",
+            "IssueDate": "2025-06-05",
+            "InvoiceTypeCode": "01",
+            "DocumentCurrencyCode": "MYR",
+            "AccountingSupplierParty": [
+                {
+                    "Party": [
+                        {
+                            "PartyIdentification": [
+                                {
+                                    "ID": [
+                                        {
+                                            "_": "C21957338070",
+                                            "schemeID": "TIN"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "ID": [
+                                        {
+                                            "_": "201001004598",
+                                            "schemeID": "BRN"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "PartyLegalEntity": [
+                                {
+                                    "RegistrationName": [
+                                        {
+                                            "_": "synergy central academy sdn bhd"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "PostalAddress": {
+                                "CityName": "Bukit mertajam",
+                                "PostalZone": "14000",
+                                "CountrySubentityCode": "07",
+                                "AddressLine": [
+                                    {
+                                        "Line": "No 1, Jalan Perusahaan 1, Taman Perindustrian Bukit Minyak"
+                                    }
+                                ],
+                                "Country": {
+                                    "IdentificationCode": "MYS"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ],
+            "AccountingCustomerParty": {
+                "Party": [
+                    {
+                        "PostalAddress": {
+                            "CityName": "Bukit mertajam",
+                            "PostalZone": "13020",
+                            "CountrySubentityCode": "07",
+                            "AddressLine": [
+                                {
+                                    "Line": "51, Lorong Seri Pinang 3, Taman Seri Pinang, Sungai Puyu, Butterworth"
+                                }
+                            ],
+                            "Country": {
+                                "IdentificationCode": "MYS"
+                            }
+                        },
+                        "PartyLegalEntity": {
+                            "RegistrationName": "OOI KAI YI"
+                        },
+                        "PartyIdentification": [
+                            {
+                                "ID": [
+                                    {
+                                        "_": "IG56194676000",
+                                        "schemeID": "TIN"
+                                    }
+                                ]
+                            },
+                            {
+                                "ID": [
+                                    {
+                                        "_": "960526075719",
+                                        "schemeID": "NRIC"
+                                    }
+                                ]
+                            }
+                        ],
+                        "contact": {
+                            "Telephone": "",
+                            "ElectronicMail": "ooi98872@gmail.com"
+                        }
+                    }
+                ]
+            },
+            "InvoiceLine": {
+                "ID": "994",
+                "InvoicedQuantity": [
+                    {
+                        "_": 1,
+                        "unitCode": "C62"
+                    }
+                ],
+                "LineExtensionAmount": [
+                    {
+                        "_": "200",
+                        "currencyID": "MYR"
+                    }
+                ],
+                "Item": {
+                    "Description": "Tuition Fee (Singer Tier) ",
+                    "CommodityClassification": [
+                        {
+                            "ItemClassificationCode": [
+                                {
+                                    "_": "010",
+                                    "listID": "CLASS"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "Price": [
+                    {
+                        "PriceAmount": [
+                            {
+                                "_": 200,
+                                "currencyID": "MYR"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "LegalMonetaryTotal": {
+                "LineExtensionAmount": [
+                    {
+                        "_": "200",
+                        "currencyID": "MYR"
+                    }
+                ],
+                "TaxExclusiveAmount": [
+                    {
+                        "_": "200",
+                        "currencyID": "MYR"
+                    }
+                ],
+                "PayableAmount": [
+                    {
+                        "_": "200",
+                        "currencyID": "MYR"
+                    }
+                ],
+                "AllowanceTotalAmount": [
+                    {
+                        "_": 0,
+                        "currencyID": "MYR"
+                    }
+                ]
+            }
+        }
+    ]
+}
