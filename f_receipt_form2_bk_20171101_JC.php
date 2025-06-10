@@ -21,7 +21,7 @@ if(isset($_GET['action']) && $_GET['action'] == 'msg_receipt_success_add'){
 }
 
 if(isset($_GET['action']) && $_GET['action'] == 'msg_receipt_success_add'){
-	
+	echo 123;
 }
 
 $chk_qry = "SELECT c_desc FROM f_cart2";
