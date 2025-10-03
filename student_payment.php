@@ -11,12 +11,13 @@ $num1=0;
 $td="";
 $t_fee=0;
 $tp_fee=0;
+$cn_row=0;
 if(isset($_POST['search'])){
 	 $query_new="select * from student where id='".$_POST['name']."'";
 	 
 	 if($_POST['p_type']!==""){
         if($_POST["p_type"]=="Tuition Fee"){
-            $str="and (f.cash_bill_option='Tuition Fee' || f.cash_bill_option='Tuition PTPK' || f.cash_bill_option='Debtor' || f.cash_bill_option='Debtor PTPK')";
+            $str="and (f.cash_bill_option='Tuition Fee' || f.cash_bill_option='Tuition PTPK' || f.cash_bill_option='Debtor' || f.cash_bill_option='Debtor PTPK' || f.cash_bill_option='Tuition PTPK Auto debit' || f.cash_bill_option='Tuition PTPK Self Pay')";
         }else{
             $str="and f.cash_bill_option='".$_POST['p_type']."'";
         }
@@ -26,16 +27,44 @@ if(isset($_POST['search'])){
 	 	$str="";
 	 }
 	 
-	     $qry="select sum(fd.rp_amount) from f_receipt as f inner join f_receipt_detail as fd on fd.r_id=f.id where f.s_id='".$_POST['name']."' and r_status='ACTIVE' ".$str."";
+	    $qry="select sum(fd.rp_amount) from f_receipt as f inner join f_receipt_detail as fd on fd.r_id=f.id where f.s_id='".$_POST['name']."' and r_status='ACTIVE' ".$str."";
 	
         $qry1="select * from f_receipt as f inner join f_receipt_detail as fd on fd.r_id=f.id where f.s_id='".$_POST['name']."'and r_status='ACTIVE' ".$str."";
 
+        $search="";
+        switch($_POST['p_type']){
+            case "Debtor PTPK":
+                $search="REFUND Debtor PTPK";
+                break;
+            case "Debtor":
+                $search="REFUND Debtor";
+                break;
+            case "Internal Exam Fee":
+                $search="REFUND Internal Exam";
+                break;
+            case "Hostel Fee":
+                $search="REFUND Hostel";
+                break;
+            case "Hostel Deposit":
+                $search="REFUND Hostel Deposit";
+                break;
+            case "Tuition Fee":
+                $search="REFUND Tuition";
+                break;
+            case "Tuition PTPK":
+                $search="REFUND Tuition PTPK";
+                break;
+            case "Enrollment Fee":
+                $search="REFUND Enrollment";
+        }
+        
+
         $qry2="SELECT SUM(fd.cn_amount) FROM f_cn as cn 
         INNER JOIN f_cn_detail as fd on fd.cn_id=cn.id
-        WHERE cn.s_id='$_POST[name]' AND cn_status='ACTIVE' AND fd.cn_desc LIKE '%$_POST[p_type]%'";
+        WHERE cn.s_id='$_POST[name]' AND cn_status='ACTIVE' AND fd.cn_desc LIKE '%$search%'";
         $sttr2=mysqli_query($conn,$qry2);
         $cn_price=mysqli_fetch_array($sttr2);
-        $cn_row=mysqli_num_rows($sttr2);
+        $cn_row=mysqli_num_rows($sttr2) ?? 0;
         
         $sttr_amonth=mysqli_query($conn,$qry);
         $result_amonth=mysqli_fetch_array($sttr_amonth);
@@ -83,8 +112,30 @@ if(isset($_POST['search'])){
                         $td.="</tr>";
                         
 					}
+    
+
+    $qrycn="SELECT * FROM f_cn as cn INNER JOIN f_cn_detail as fd ON fd.cn_id=cn.id 
+    WHERE cn.s_id='$_POST[name]' AND cn_status='ACTIVE' AND fd.cn_desc LIKE '%$search%'";
+        $sttrcn=mysqli_query($conn,$qrycn);
+    while($cnresult=mysqli_fetch_array($sttrcn)){
+        $rno_qry = "SELECT count(fr.id) AS r_no FROM f_receipt AS fr WHERE fr.r_status = 'ACTIVE' AND fr.receipt_type = '".$cnresult['receipt_type']."'  AND fr.id BETWEEN 1 AND ".$cnresult[0];
+        $rno_result = mysqli_query($conn, $rno_qry);
+        $rno_row = mysqli_fetch_array($rno_result);
+        if($cnresult['cn_no'] == ''){
+            $r_no = 10000 + $rno_row['r_no'];
+            $r_no = "CN".$r_no;
+        }else{
+            $r_no = $cnresult['r_no'];
+        }
+        $td.="<tr>";
+        $td.="<td>".$cnresult['cn_date']."</td>";
+        $td.="<td>".$r_no."</td> ";
+        $td.="<td>".$cnresult['cn_desc']."</td>";
+        $td.="<td>".$cnresult['cn_amount']."</td>";
+        $td.="</tr>";
+    }
                     
-					$amount=$result_new['tuition_fee']-$result1[0];
+	$amount=$result_new['tuition_fee']-$result_amonth[0]-$cn_price[0];
                     //echo "<script>alert('".$td."')</script>";
 }
 
@@ -181,7 +232,7 @@ if(isset($_POST['search'])){
                     <td><?php echo $result_new['tuition_fee'] ?></td>
                     <td><?php echo $result_amonth[0]; ?></td>
                     <td><?php echo $result_new['tuition_fee']-$result_amonth[0]+$cn_price[0]; ?></td>
-                    <?php }else{echo "<td>$result_amonth[0]</td>";}?>
+                    <?php }else{echo "<td>".($result_amonth[0]-$cn_price[0])."</td>";}?>
                     <?php }else{ echo "<td colspan='5' style='text-align:center'>Please select student and payment</td>"; }?>
                     </tr>
                     <?php if($t_fee!==0 && $tp_fee!==0){ ?>
@@ -196,8 +247,8 @@ if(isset($_POST['search'])){
                         <td colspan="2"></td>
                     </tr>
                     <?php } ?>
-                    <?php if($cn_row!==0){ ?>
-                        <td colspan="3" style="text-align: right;">Credit Note <?=$_POST["p_name"]?></td>
+                    <?php if($cn_row!=0){ ?>
+                        <td colspan="3" style="text-align: right;">Credit Note</td>
                         <td colspan="2">-<?=$cn_price[0]?></td>
                     <?php } ?>
                     

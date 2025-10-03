@@ -124,7 +124,7 @@ $result = mysqli_query($conn,$qry);
     </div>-->
     
     <div class="col-md-12">	
-                <div class="form-group">
+                <!-- <div class="form-group">
                     <form action="calculate_student.php" method="post">
                         <div class="row">
                             <div class="col-lg-3">
@@ -158,8 +158,28 @@ $result = mysqli_query($conn,$qry);
                     </div>
                     </form>
                 </div>
+            </div> -->
+
+            <div class="col-md-6">
+              <form method="post" action="print_school.php" target="_blank">
+              <div class="form-group">
+              <select class="selectpicker" name="name" id="name" data-live-search="true">
+                  <option>--- choose school ---</option>
+                  <?php 
+                    $qry="SELECT * FROM school group by name_school";
+                    $sttr=mysqli_query($conn,$qry);
+                    while($row=mysqli_fetch_array($sttr)){
+                  ?>
+                    <option value="<?=$row["name_school"]?>"><?=$row["name_school"]?></option>
+                  <?php } ?>
+              </select>
+              <button type="submit" name="print" class="btn btn-primary">Print</button>
+              </form>
+              
             </div>
 
+            </div>
+            
             <div class="col-md-12">	
                 <div class="form-group">
                     <form action="student_list.php" method="get">
@@ -167,16 +187,16 @@ $result = mysqli_query($conn,$qry);
                             <div class="col-lg-3">
                                 <label>Search By Status</label>
                                 <div id="basic-example">
-									<select name="status" class="form-control" id="c_type" required>
-										<option value="">Choose</option>
-										<option value="active">Current Student</option>
-										<option value="graduate">Graduate</option>
-										<option value="quit">Quit</option>
-									</select>
-                                </div>
-                            </div>
-                        </div>
-                        <br />
+                                <select name="status" class="form-control" id="c_type" required>
+                                  <option value="">Choose</option>
+                                  <option value="active">Current Student</option>
+                                  <option value="graduate">Graduate</option>
+                                  <option value="quit">Quit</option>
+                                </select>
+                                              </div>
+                                          </div>
+                                      </div>
+                                      <br />
                     
                     <div style="padding: 19px 20px 20px;margin-top: 20px;    margin-bottom: 20px;background-color: #f5f5f5;border-top: 1px solid #e5e5e5;" class="form-group">
                       <div class="row">

@@ -89,10 +89,11 @@ if(isset($_POST['submit']) && $_POST['submit'] == 'save'){
 					}  
 	
 					$random_password = generateRandomPassword();
+					
+					$password=$_POST['password'] ?? 'synergy';
+					$hashed_pass = password_hash($password,PASSWORD_DEFAULT);
 	
-					$hashed_pass = password_hash($random_password,PASSWORD_DEFAULT);
-	
-					$insert_login_query = "INSERT INTO student_login(student_ic, password, status) VALUES ('".$_POST['ic']."', '".$hashed_pass."', '1st_login')";
+					$insert_login_query = "INSERT INTO student_login(student_ic, password, status) VALUES ('".$_POST['ic']."', '".$password."', 'ACTIVE')";
 					mysqli_query($conn, $insert_login_query);
 	
 	
@@ -117,7 +118,7 @@ if(isset($_POST['submit']) && $_POST['submit'] == 'save'){
 						$mail->isHTML(true);
 						$mail->Subject = 'Your Password for Student Portal';
 						$mail->Body = 'Hello, ' . $_POST['name'] . '<br><br>' .
-						'Your password for the student portal is : ' . $random_password . '<br><br>' .
+						'Your password for the student portal is : ' . $passwors . '<br><br>' .
 						'Please keep this password safe and <b>do not share</b> it with anyone.<br><br>' .
 						'Kindly visit <a href="https://registration.synergycollege2u.com/student_login.php">registration.synergycollege2u.com</a> to change your password.<br><br>'.
 						'Thank You<br>';

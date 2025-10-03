@@ -37,7 +37,7 @@ if(isset($_GET["c"])){
 
 
 if(isset($_GET["i"])){
-    $qry="SELECT * FROM student_internship WHERE s_id='$_GET[c]'";
+    $qry="SELECT * FROM student_internship WHERE s_id='$_GET[i]'";
     $sttr=mysqli_query($conn,$qry);
     $row=mysqli_num_rows($sttr);
     if($row>=1){
@@ -46,4 +46,16 @@ if(isset($_GET["i"])){
         echo "false";
     }
 }
+
+if(isset($_GET["rpk"])){
+    $qry="SELECT * FROM student_rpk WHERE s_id='$_GET[rpk]' AND lvl='$_GET[lvl]'";
+    $sttr=mysqli_query($conn,$qry);
+    $row=mysqli_num_rows($sttr);
+    if($row>=1){
+        echo "true";
+    }else{
+        echo "false";
+    }
+}
+
 ?>

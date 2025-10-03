@@ -2,7 +2,7 @@
 include("include/db.php");
 if(isset($_GET["action"]) && $_GET["action"] == "lhdn_submit"){
     $id = $_GET['id'];
-    echo $qry = "SELECT *,r.s_name AS old_name,r.r_date as newdate,r.createby as newid FROM f_receipt AS r
+    $qry = "SELECT *,r.s_name AS old_name,r.r_date as newdate,r.createby as newid FROM f_receipt AS r
 		LEFT JOIN f_b_c AS bc ON bc.r_id = r.id 
 		LEFT JOIN student AS s ON s.id = r.s_id
 		WHERE r.id = '".$id."'";
@@ -65,6 +65,8 @@ if(isset($_GET["action"]) && $_GET["action"] == "lhdn_submit"){
         $select = "SELECT rp_amount,rp_desc  FROM f_receipt_detail WHERE r_id = '".$id."'";
         $result = mysqli_query($conn, $select);
         $row_detail = mysqli_fetch_array($result);
+        $rp_amount=$row_detail["rp_amount"];
+        
         $rp_amount=600;
         // while( $row_detail = mysqli_fetch_array($result)){
         //      $rp_amount=$row_detail["rp_amount"];
@@ -75,7 +77,9 @@ if(isset($_GET["action"]) && $_GET["action"] == "lhdn_submit"){
         $tin="IG56194676000";
         $nric="960526075719";
         
-        
+        echo date('Y-m-d', strtotime($row['newdate']));
+        echo "<br>";
+        $time=date('H:i:s', strtotime($row['newdate']))."Z";
 
         $data = [
             "_D" => "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2",
@@ -86,7 +90,7 @@ if(isset($_GET["action"]) && $_GET["action"] == "lhdn_submit"){
                 "ID" => [["_" => $r_no]],
                 "IssueDate" => [["_" => date('Y-m-d', strtotime($row['newdate']))]],
                 "InvoiceTypeCode" => [["_" => "01", "listVersionID" => "1.0"]],
-                "IssueTime" => [["_" => date('H:i:s')]],
+                "IssueTime" => [["_" => $time]],
                 "DocumentCurrencyCode" => [["_" => "MYR"]],
 
                 "AccountingSupplierParty" => [
@@ -151,7 +155,7 @@ if(isset($_GET["action"]) && $_GET["action"] == "lhdn_submit"){
                         ],
                         "Contact" => [
                             [
-                            "Telephone" => [["_" => "+60".$row["hp_contact"]]],
+                            "Telephone" => [["_" => "+6".$row["hp_contact"]]],
                             "ElectronicMail" => [["_" => $row["s_email"]]]
                             ]
                         ]
@@ -176,11 +180,13 @@ if(isset($_GET["action"]) && $_GET["action"] == "lhdn_submit"){
                     "Price" => [
                         ["PriceAmount" => [["_" => (float)$rp_amount, "currencyID" => "MYR"]]]
                     ],
-                    "ItemPriceExtension"=> "0.00",
+                    "ItemPriceExtension"=>[
+                        ["Amount" => [["_" => 0.00, "currencyID" => "MYR"]]]
+                    ],
                     "TaxTotal" => [
                         [
                         "TaxAmount" => [["_" => 0.00, "currencyID" => "MYR"]],
-                        "TaxSubtotal" => [
+                        "TaxSubtotal" => [  
                             [
                             "TaxableAmount" => [["_" => (float)$rp_amount, "currencyID" => "MYR"]],
                             "TaxAmount" => [["_" => 0.00, "currencyID" => "MYR"]],
@@ -275,6 +281,7 @@ if(isset($_GET["action"]) && $_GET["action"] == "lhdn_submit"){
 
         echo "HTTP Status: $httpCode\n";
         echo "Response: $response\n";
+        
 
 
 

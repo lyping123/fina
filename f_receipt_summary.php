@@ -11,6 +11,7 @@ require('header.php');
 $c_type = '';
 
 $searchdate="";
+$cnsearchdate="";
 
 if(isset($_GET['search']) && $_GET['search'] == 'search'){
 
@@ -23,6 +24,7 @@ if(isset($_GET['search']) && $_GET['search'] == 'search'){
     if(isset($_GET["s_date"]) && !empty($_GET["s_date"])){
 
         $searchdate=" AND DATE(f.r_date)>=DATE('$_GET[s_date]') AND DATE(f.r_date)<=DATE('$_GET[e_date]')";
+        $cnsearchdate=" AND DATE(f.cn_date)>=DATE('$_GET[s_date]') AND DATE(f.cn_date)<=DATE('$_GET[e_date]')";
 
     }
 
@@ -158,6 +160,37 @@ if(isset($_GET['search']) && $_GET['search'] == 'search'){
 
 	$result_rcp = mysqli_query($conn,$qry_rcp);
 
+    $qry_rcn = "SELECT f.id,f.pay_mtd,l.l_name,DATE(f.cn_date) as r_date, f.receipt_type,
+                IF(f.s_name <> '', f.s_name, s.s_name) AS s_name,
+                IF(f.s_ic <> '', f.s_ic, s.ic) AS s_ic,
+                GROUP_CONCAT(fr.cn_desc, '(RM ', fr.cn_amount, ')'
+
+                        SEPARATOR '<hr>') AS descriptionn,
+
+                    SUM(fr.cn_amount) AS total_amount,
+                IF(f.cn_no <> '',
+                    f.cn_no,
+                    (SELECT 
+                        LPAD(COUNT(frrr.id) + 10000,
+                            7,
+                            CASE
+                            WHEN f.cn_status = 'ACTIVE' THEN 'CN'
+                            END) AS r_no
+                    FROM 
+                    f_cn AS frrr
+                    WHERE frrr.cn_status = 'ACTIVE')
+                    ) as r_no
+
+                FROM f_cn AS f
+                INNER JOIN f_cn_detail as fr ON fr.cn_id = f.id
+				LEFT JOIN student AS s ON s.id = f.s_id
+                INNER JOIN login AS l ON l.id = f.createby
+                WHERE (f.cn_status = 'ACTIVE' OR f.cn_status = 'SPECIAL') ".$cnsearchdate." 
+                GROUP BY f.id
+                ORDER BY f.id DESC";
+		
+	$sttr_rcn = mysqli_query($conn,$qry_rcn);
+
 
 }else{
 
@@ -292,6 +325,37 @@ if(isset($_GET['search']) && $_GET['search'] == 'search'){
                 ";
 
     $result_rcp = mysqli_query($conn,$qry_rcp);
+    $qry_rcn = "SELECT f.id,f.pay_mtd,l.l_name,DATE(f.cn_date) as r_date, , f.receipt_type,
+                IF(f.s_name <> '', f.s_name, s.s_name) AS s_name,
+                IF(f.s_ic <> '', f.s_ic, s.ic) AS s_ic,
+                GROUP_CONCAT(fr.cn_desc, '(RM ', fr.cn_amount, ')'
+
+                        SEPARATOR '<hr>') AS descriptionn,
+
+                    SUM(fr.cn_amount) AS total_amount,
+                IF(f.cn_no <> '',
+                    f.cn_no,
+                    (SELECT 
+                        LPAD(COUNT(frrr.id) + 10000,
+                            7,
+                            CASE
+                            WHEN f.cn_status = 'ACTIVE' THEN 'CN'
+                            END) AS r_no
+                    FROM 
+                    f_cn AS frrr
+                    WHERE frrr.cn_status = 'ACTIVE')
+                    ) as r_no
+
+                FROM f_cn AS f
+                INNER JOIN f_cn_detail as fr ON fr.cn_id = f.id
+				LEFT JOIN student AS s ON s.id = f.s_id
+                INNER JOIN login AS l ON l.id = f.createby
+                WHERE f.id=0
+                AND(f.cn_status = 'ACTIVE' OR f.cn_status = 'SPECIAL') ".$cnsearchdate." 
+                GROUP BY f.id
+                ORDER BY f.id DESC";
+		
+	$sttr_rcn = mysqli_query($conn,$qry_rcn);
 
 }
 
@@ -304,6 +368,8 @@ while($row_rcp = mysqli_fetch_array($result_rcp)){
 while($row_rcn = mysqli_fetch_array($sttr_rcn)){
     $array_receipt[]=$row_rcn;
 }
+
+$json=json_encode($array_receipt);
 
 
 ?>
@@ -350,7 +416,7 @@ while($row_rcn = mysqli_fetch_array($sttr_rcn)){
 
                 <div class="form-group">
 
-                    <form action="f_receipt_listnew.php" method="get">
+                    <form action="f_receipt_summary.php" method="get">
 
                         <div class="row">
 
@@ -464,85 +530,33 @@ while($row_rcn = mysqli_fetch_array($sttr_rcn)){
 
                     <th>Create By</th>
 
-                	    <th>Print</th>
+            
 
                 </thead>
 
                 <tbody>
 
-                <?php while($row_rcp = mysqli_fetch_array($result_rcp)){ 
-
-                    
-
-                ?>
+                <?php foreach(json_decode($json) as $newrow){ ?>
 
                 	<tr>
 
-                    	<td><?=$row_rcp['r_no']?></td>
+                    	<td><?=$newrow->r_no?></td>
 
-                    	<td><?=$row_rcp['r_date']?></td>
+                    	<td><?=$newrow->r_date?></td>
 
-                    	<td><?=$row_rcp['s_name']?></td>
+                    	<td><?=$newrow->s_name?></td>
 
-                    	<td><?=$row_rcp['s_ic']?></td>
+                    	<td><?=$newrow->s_ic?></td>
 
-                        <td><?=$row_rcp['descriptionn']?></td>
+                        <td><?=$newrow->descriptionn?></td>
 
-                        <td>RM<?=$row_rcp['total_amount']?></td>
+                        <td>RM<?=$newrow->total_amount?></td>
 
-                        <td><?=($row_rcp['pay_mtd']=="bankin"?"Funds Transfer" : $row_rcp['pay_mtd'])?></td>
+                        <td><?=($newrow->pay_mtd=="bankin"?"Funds Transfer" :$newrow->pay_mtd)?></td>
 
-                        <td><?=$row_rcp['l_name']?></td>
+                        <td><?=$newrow->l_name?></td>
 
-                    	
-
-                    	<td>
-
-                        <!--<div class="dropdown">
-
-                          <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"> Print <span class="caret"></span></button>
-
-                          <ul class="dropdown-menu dropdown-menu-right">
-
-                            <li><a href="f_print_receipt.php?&id=<?=$row_rcp[0]?>" target="_blank"><i class="icon-print"></i> Print (Synergy Central Academy)</a></li>
-
-                            <li><a href="f_print_receipt1.php?&id=<?=$row_rcp[0]?>" target="_blank"><i class="icon-print"></i> Print (Pusat Kemahiran Telekomunikasi Mikro)</a></li>
-
-                          </ul>
-
-                        </div>-->
-
-							<?php if($row_rcp['receipt_type'] == 1){?>
-
-							<a href="f_print_receipt1.php?&id=<?=$row_rcp[0]?>" target="_blank" class="btn btn-primary"><i class="icon-print"></i> Print</a>
-
-							<?php }elseif($row_rcp['receipt_type'] == 2){?>
-
-							<a href="f_print_receipt.php?&id=<?=$row_rcp[0]?>" target="_blank" class="btn btn-primary"><i class="icon-print"></i> Print</a>
-
-							<?php }?>
-
-                        </td>
-
-                    <?php if(isset($_SESSION['level']) && $_SESSION['level'] == 'superadmin'){?>
-
-                        <td><div class="dropdown">
-
-                  <button class="btn btn-warning dropdown-toggle" type="button" data-toggle="dropdown"> Action <span class="caret"></span></button>
-
-                  <ul class="dropdown-menu dropdown-menu-right">
-
-                    <li><a href="f_receipt_edit1.php?&id=<?=$row_rcp[0]?>">Edit</a></li>
-
-                    <li><a href="f_receipt1.php?action=delete_receipt&id=<?=$row_rcp[0]?>">Delete</a></li>
-
-                  </ul>
-
-                </div></td>
-
-                    <?php }?>
-
-                    </tr>
+                    
 
                 <?php }?>
 

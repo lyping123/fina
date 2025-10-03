@@ -40,7 +40,7 @@ if(isset($_GET['action']) && $_GET['action'] == 'msg_success_add'){
 	$qry_rcp = "SELECT 
                     f.cash_bill_option as new_option,
                     s.tuition_fee,
-                    f.id,
+                    f.id as newid,
                     s.id,
                     f.receipt_type,
                     l.l_name,
@@ -63,15 +63,31 @@ if(isset($_GET['action']) && $_GET['action'] == 'msg_success_add'){
                                         AND frr.id BETWEEN 1 AND f.id),
                             (SELECT 
                                     LPAD(COUNT(frrr.id) + 10000,
-                                                7,
+                                                8,
                                                 CASE
-                                                    WHEN f.cash_bill_option = 'Debtor PTPK' THEN 'DP'
-                                                    WHEN f.cash_bill_option = 'Debtor' THEN ' D'
-                                                    WHEN f.cash_bill_option = 'Internal Exam Fee' THEN ' I'
-                                                    WHEN f.cash_bill_option = 'Hostel Fee' THEN ' H'
+                                                    WHEN f.cash_bill_option = 'Debtor PTPK' THEN ' DP'
+
+                                                    WHEN f.cash_bill_option = 'Debtor' THEN '  D'
+
+                                                    WHEN f.cash_bill_option = 'Internal Exam Fee' THEN '  I'
+
+                                                    WHEN f.cash_bill_option = 'Hostel Fee' THEN '  H'
+
                                                     WHEN f.cash_bill_option = 'Tuition PTPK' THEN 'TP'
-                                                    WHEN f.cash_bill_option = 'Tuition Fee' THEN ' T'
-                                                    WHEN f.cash_bill_option = 'Personal Bond' THEN ' P'
+
+                                                    WHEN f.cash_bill_option = 'Tuition Fee' THEN '  T'
+                                                    
+                                                    WHEN f.cash_bill_option = 'Tuition PTPK Auto debit' THEN 'TPA'
+
+                                                    WHEN f.cash_bill_option = 'Tuition PTPK Self pay' THEN 'TPS'
+
+                                                    WHEN f.cash_bill_option = 'Personal Bond' THEN '  P'
+
+                                                    WHEN f.cash_bill_option = 'Enrollment Fee' THEN '  E'
+
+                                                    WHEN f.cash_bill_option = 'Hostel Deposit' THEN 'HP'
+
+                                                    WHEN f.cash_bill_option = 'laptop deposit' THEN 'LD'
                                                 END) AS r_no
                                 FROM
                                     f_receipt AS frrr
@@ -148,9 +164,10 @@ body {
                 	<th style="width: 90px;">Date</th>
                 	<th>Name</th>
                 	<th>IC</th>
-                    <th>Description</th>
+                    <th width="200px">Description</th>
                     <th>Price</th>
                     <th>Create By</th>
+                    <th>Action</th>
                 </thead>
                 <tbody>
                 <?php 
@@ -161,7 +178,7 @@ body {
                     $enc=0;
                 ?>
                 <?php 
-                $enc="";
+                $enc=0;
 
                 $qry2="SELECT SUM(CASE WHEN fd.cn_desc ='REFUND TUITION FEE' THEN fd.cn_amount ELSE 0 END) as tuitionfee,
                               SUM(CASE WHEN fd.cn_desc ='REFUND HOSTEL FEE' THEN fd.cn_amount ELSE 0 END) as hostelfee,
@@ -214,7 +231,7 @@ body {
                        
                         $hostel_de+=$row_rcp["total_amount"];
                     }elseif($parts=="Enrollment Fee"){
-                        $enc+=$row_rcp["total_amount"];
+                        $enc+=(int)$row_rcp["total_amount"];
                     }
                     $total=$row_rcp["tuition_fee"];
                     
@@ -229,10 +246,10 @@ body {
                         <td><?=$row_rcp['descriptionn']?></td>
                         <td>RM <?=$row_rcp['total_amount']?></td>
                         <td><?=$row_rcp['l_name']?></td>
+                        <td><a href="dompdf.php?id=<?=$row_rcp['newid']?>" class="btn btn-primary" target="_blank">download</a></td>
                     </tr>
                     
                 <?php }?>
-                   ><?=$row_rcp['l_name']?></td>
                     </tr>
                 
                 <?php while($result_se=mysqli_fetch_array($sttr_se)){ 
@@ -260,6 +277,7 @@ body {
                         <td><?=$result_se['cn_desc']?></td>
                         <td>RM <?=$result_se['cn_amount']?></td>
                         <td><?=$result_se['l_name']?></td>
+                         <td><a href="dompdf.php?id=<?=$row_rcp['newid']?>" class="btn btn-primary" target="_blank">download</a></td>
                     </tr>
 
                 <?php } ?>
@@ -281,7 +299,7 @@ body {
                 if($cn_price["hdepositfee"]!=0){ ?>
                 <tr>
                     <td colspan="5"  style="text-align:left;">Credit note Hostel deposit</td>
-                    <td style="color:blue" colspan="2">RM -<?=$cn_price["hosteldeposit"]?></td>
+                    <td style="color:blue" colspan="2">RM <?=$cn_price["hdepositfee"] ?? 0?></td>
                 </tr>
                 <?php } ?>
                 <tr>
@@ -323,11 +341,11 @@ body {
                     ?>
                     <h5 class="card-title">Total fee of each payment</h5>
                     
-                    <p class="card-text">Endrollment Fee: <span style="color:green">RM <?=$result["e_fee"]?></span></p>
-                    <p class="card-text" >Hostel Deposit:  <span style="color:red">RM <?=$result["hostel_deposit"]?></span></p>
-                    <p class="card-text" >Hostel fee:  <span style="color:orange">RM <?=$result["hostel_fee"]?></span></p>
-                    <p class="card-text">Tuition Fee: <span style="color:blue">RM <?=$result["tuition_fee"]?></span></p>
-                    <p class="card-text">internal exam fee: <span style="color:purple"> RM <?=$result["internal_fee"]?></span></p>
+                    <p class="card-text">Endrollment Fee: <span style="color:green">RM <?=$result["e_fee"] ?? 0?></span></p>
+                    <p class="card-text" >Hostel Deposit:  <span style="color:red">RM <?=$result["hostel_deposit"] ?? 0?></span></p>
+                    <p class="card-text" >Hostel fee:  <span style="color:orange">RM <?=$result["hostel_fee"] ?? 0?></span></p>
+                    <p class="card-text">Tuition Fee: <span style="color:blue">RM <?=$result["tuition_fee"] ?? 0?></span></p>
+                    <p class="card-text">internal exam fee: <span style="color:purple"> RM <?=$result["internal_fee"]?? 0?></span></p>
                 </div>
             </div>
         </div>

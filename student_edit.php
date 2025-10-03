@@ -71,8 +71,31 @@ $row3=mysqli_fetch_array($result3);
             <input type="text" class="form-control" name="name" value="<?=$row['s_name']?>" required>
             </div>
             <div class="form-group">
-            <label>NRIC</label>
-            <input type="text" class="form-control" id="ic" name="ic" value="<?=$row['ic']?>" required>
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h4>Student portal Account</h4>
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                            <label>NRIC</label>
+                            <input type="text" class="form-control" name="ic" value="<?=$row['ic']?>" pattern="^\d{12}$" required>e.g 991010071010
+                        </div>
+                            <?php  
+                            $qry="SELECT * FROM student_login where student_ic='$row[ic]'";
+                            $sttr=mysqli_query($conn,$qry);
+                            $num=mysqli_num_rows($sttr);
+                            $result=mysqli_fetch_array($sttr);
+
+                            ?>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="text" class="form-control" id="password" name="password" >
+                        </div>
+                        </div>
+                        
+                    </div>
+                </div>
             </div>
             <div class="form-group">
             <label>Birth cert</label>
@@ -432,6 +455,7 @@ $row3=mysqli_fetch_array($result3);
             <label>Email</label>
             <input type="text" class="form-control" name="email" value="<?=$row['s_email']?>" >
             </div>
+            
             <div class="form-group">
             <label>Student ID No.</label>
             <input type="text" class="form-control" name="s_id" value="<?=$row['s_id']?>" >

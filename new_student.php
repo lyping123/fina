@@ -64,9 +64,37 @@ $row = mysqli_fetch_array($result);
             *Please change the student name in Visitor list, or change in student list after register the new student.
             </div>
             <div class="form-group">
-            <label>NRIC</label>
-            <input type="text" class="form-control" name="ic" value="<?=$row['s_ic']?>" pattern="^\d{12}$" required>e.g 991010071010
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h4>Student portal Account</h4>
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                            <label>NRIC</label>
+                            <input type="text" class="form-control" name="ic" value="<?=$row['s_ic']?>" pattern="^\d{12}$" required>e.g 991010071010
+                        </div>
+                            <?php  
+                            $qry="SELECT * FROM student_login where student_ic='$row[s_ic]'";
+                            $sttr=mysqli_query($conn,$qry);
+                            $num=mysqli_num_rows($sttr);
+                            $result=mysqli_fetch_array($sttr);
+
+                            ?>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="text" class="form-control" id="password" name="password" >
+                        </div>
+                        </div>
+                        
+                    </div>
+                </div>
             </div>
+            
+            <!-- <div class="form-group">
+                <label>NRIC</label>
+                <input type="text" class="form-control" name="ic" value="<?=$row['s_ic']?>" pattern="^\d{12}$" required>e.g 991010071010
+            </div> -->
             <div class="form-group">
             <label>Nationality</label>
             <input type="text" class="form-control" name="nationality" value="<?=$row['nationality']?>" >

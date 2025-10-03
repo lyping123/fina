@@ -51,16 +51,16 @@ $result=mysqli_fetch_array($sttr);
 <div class="container">
     <form action="upload_offerletter.php" method="post" enctype="multipart/form-data">
     <div class="row">
-        <div class="col-md-12">
+        <!-- <div class="col-md-12">
             <div class="col-md-6">
                 <label>Upload Your offer letter</label>
                 <input type="file" name="offer" class="form-control" />
                 <button style="margin-top: 20px;" type="submit" name="submit" class="btn btn-primary">upload</button>
             </div>
-        </div>
+        </div> -->
         <div class="col-md-12">
             <div class="pdf-viewer">
-                    <embed src="<?=$result["path"]?>" width="100%" height="1000px" type="application/pdf" disposition="inline" download="none download" />
+                    <embed src="offerletter/<?=$result["path"]?>" width="100%" height="1000px" type="application/pdf" disposition="inline" download="none download" />
             </div>
         </div>
     </div>

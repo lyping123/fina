@@ -107,6 +107,7 @@ include("include/db.php");
                         <ul class="dropdown-menu">
                         <li><a href="registration_form.php">Student Registration Form</a></li>
                         <li><a href="file_list.php?btn_0=ALL">Add student Document</a></li>
+                        <li><a href="complaint_tableform.php">Student Complaint</a></li>
                         <li><a href="checkhandbook.php">Check College handbook agreement</a></li>
                             <li><a href="newaddress.php">View student address now</a></li>
                             <li><a href="student_quanlification.php">View SPM summary</a></li>
@@ -122,9 +123,12 @@ include("include/db.php");
                                 <li><a href="add_studentresult.php">Add student exam result(JPK PI A)</a></li>
                                 <li><a href="student_schedulesform.php">Add student class schedules</a></li>
                                 <li><a href="calenderform.php">Add student class calendar</a></li>
+                                <li><a href="student_rpk.php">Add student rpk</a></li>
                                 <li><a href="add_internshiprelipslip.php">Add student intership agreement</a></li>
+                                <li><a href="student_final_form.php">Add student final project</a></li>
                               </ul>
                             <li><a href="add_announcement.php">Add announcement</a></li>
+                            <li><a href="course_announcement.php">Set course announcement</a></li>
                             
                         	  <li><a href="student_list.php">Student List</a></li>
                             <li><a href="student_payment.php">View Student Payment</a></li>
@@ -258,6 +262,7 @@ include("include/db.php");
                         	<li><a href="f_receipt_form1.php">New Cash Bill</a></li>
                         	<li><a href="f_receipt_list1.php">Cash Bill List</a></li>
                           <li><a href="f_receipt_listnew.php">Cash Bill List(special)</a></li>
+                          <li><a href="f_receipt_summary.php">Cash Bill List Summary</a></li>
                           <li><a href="display_receipt.php">Vertify Student Receipt</a></li>
                           <li><a href="check_receipt.php">Check Receipt form</a></li>
                         </ul>

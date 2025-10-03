@@ -19,6 +19,7 @@ $row = mysqli_fetch_array($result);
 <?php }elseif($row['receipt_type'] == '1'){?>
     <a class="btn btn-primary" href="f_receipt_form1.php?action=msg_save"  onclick="window.open('f_print_receipt1.php?&id=<?=$_GET['id']?>', '_blank')"> Print (Pusat Kemahiran Telekomunikasi Mikro)</a>
 <?php }?>
-     <a class="btn btn-success" href="submit_lhdn.php?id=<?=$_GET['id']?>&action=lhdn_submit" >Submit to lhdn</a>
+     <!-- <a class="btn btn-success" href="submit_lhdn.php?id=<?=$_GET['id']?>&action=lhdn_submit" >Submit to lhdn</a> -->
+     <a class="btn btn-success" href="f_send_receipt.php?id=<?=$_GET['id']?>">Mail receipt to student</a>
 
 <?php require('footer.php');?>

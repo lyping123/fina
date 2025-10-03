@@ -137,6 +137,7 @@ include("include/db.php");
                     <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Examination<b class="caret"></b></a>
                         <ul class="dropdown-menu">
                             <li><a href="studentviewresult.php">Exam result</a></li>
+                            <li><a href="student_rpklist.php">RPK result</a></li>
 							<li><a href="studentviewtranscript.php">Transcript</a></li>
 							
                         </ul>
@@ -145,6 +146,7 @@ include("include/db.php");
                     <!--<li><a href="handbook.php">Handbook</a></li>-->
                     <!--<li><a href="assessment_unit.php">Assessment Unit</a></li>-->
                     <li><a href="student_elibrary.php">E-Library</a></li>
+                    <li><a href="student_complaint_form.php">Complaint</a></li>
                     
                     <!--<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
                         <ul class="dropdown-menu">

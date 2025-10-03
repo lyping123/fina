@@ -61,6 +61,25 @@ if(isset($_POST["submit"])){
 
 }
 
+if(isset($_POST["delete"])){
+
+    $qry="DELETE FROM student_trainingpathway where id='$_POST[delete]'";
+    if($sttr=mysqli_query($conn,$qry)){
+      unlink($row["img"]);
+      echo "<script>
+        alert('training pathway deleted success');
+      </script>";
+      
+    }else{
+       echo "<script>
+        alert('training pathway deleted fail');
+      </script>";
+    }
+}
+
+$qry="SELECT * FROM student_trainingpathway";
+$sttr=mysqli_query($conn,$qry);
+
 
 ?>
 <div class="container">
@@ -95,7 +114,7 @@ if(isset($_POST["submit"])){
     </style>
     <div class="row">
         <div class="col-md-12">
-            <form action="student_schedulesform.php" method="post" enctype="multipart/form-data">
+            <form action="student_trainingpathway.php" method="post" enctype="multipart/form-data">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3>Add Training pathway</h3>
@@ -141,6 +160,31 @@ if(isset($_POST["submit"])){
             </form>
         </div>
     </div>
+    <div class="row">
+    <div class="col-md-12">
+      <div  class="table-responsive">
+            <table id="example1" class="table table-bordered">
+                  <thead>
+                      <th>Student Name</th>
+                      <th>Training pathway document</th>
+                      <th>Action</th>
+                  </thead>
+                  <tbody>
+                      <?php while($result=mysqli_fetch_array($sttr)){ ?>
+                          <tr>
+                            <td><?=$result["s_name"]?></td>
+                            <td><a href="<?=$result["attachment"]?>" target="_blank"><?=$result["attachment"]?></a></td>
+                            <form action="student_trainingpathway.php" method="post">
+                            <td><button type="submit" class="btn btn-danger" name="delete" value="<?=$result["id"]?>">delete</button></td>
+                            </form>
+                          </tr>
+
+                      <?php } ?>
+                  </tbody>
+            </table>
+      </div>
+    </div>
+</div>
     <?php include("footer.php"); ?>
 </div>
 

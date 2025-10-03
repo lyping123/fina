@@ -1,24 +1,10 @@
 <?php
 require('include/include.php');
-//require_once('fpdf182/fpdf.php');
+// require __DIR__ . '/../vendor/autoload.php'; 
+// use Dompdf\Dompdf;
+// use Dompdf\Options;
 
-
-// class PDF extends FPDI
-// {
-//     protected $_tplIdx;
-
-//     public function Header()
-//     {
-//         if (null === $this->_tplIdx) {
-//             $this->setSourceFile('Letterhead.pdf');
-//             $this->_tplIdx = $this->importPage(1);
-//         }
-
-//         $this->useTemplate($this->_tplIdx);
-//     }
-// }
-
-// require_once('fpdi182/fpdi.php');
+$type="";
 $qry = "SELECT *,r.s_name AS old_name,r.r_date as newdate,r.createby as newid FROM f_receipt AS r
 		LEFT JOIN f_b_c AS bc ON bc.r_id = r.id 
 		LEFT JOIN student AS s ON s.id = r.s_id
@@ -31,8 +17,6 @@ $select="select * from login where id='".$row["newid"]."'";
 $sttr=mysqli_query($conn,$select);
 $row_n=mysqli_fetch_array($sttr);
 
-
-    
                         if($row['receipt_type'] == 2){
                             if($row['cash_bill_option'] == 'Debtor PTPK'){
                                 $type = 'DP';
@@ -48,7 +32,7 @@ $row_n=mysqli_fetch_array($sttr);
                                 $type = 'TP';
                             }elseif($row['cash_bill_option'] == 'Tuition PTPK Auto debit'){
                                 $type = 'TPA';
-                            }elseif($row['cash_bill_option'] == 'Tuition PTPK Seft pay'){
+                            }elseif($row['cash_bill_option'] == 'Tuition PTPK Self pay'){
                                 $type = 'TPS';
                             }
                             elseif($row['cash_bill_option'] == 'Enrollment Fee'){
@@ -78,8 +62,26 @@ $row_n=mysqli_fetch_array($sttr);
                                 $r_no = $row['r_no'];
                             }
                         }
-?>
+// $options = new Options();
+// $options->set('isRemoteEnabled', true); 
+// $dompdf = new Dompdf($options);
 
+// // --- capture receipt HTML ---
+// $id = $_GET['id'] ?? null;
+// ob_start();
+// include __DIR__ . "/f_print_receipt.php";   
+// $html = ob_get_clean();
+
+// // --- render to PDF ---
+// $dompdf->loadHtml($html);
+// $dompdf->setPaper("A4", "portrait");
+// $dompdf->render();
+
+// $filename = $r_no . " " . $row['s_name'] . ".pdf";
+// $dompdf->stream($filename, ["Attachment" => false]); // false = open in browser
+// exit;
+?>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style type="text/css" media="print">
     @page 
     {
@@ -115,7 +117,7 @@ table {
 
 </style>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" moznomarginboxes>
+<html xmlns="http://www.w3.org/1999/xhtml" moznomarginboxes id="content">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -123,24 +125,24 @@ table {
 <title>Invoice</title>
 </head>
 <!-- onLoad="window.print()" -->
-<body id="content"  style="font-family: Arial;">
+<body   style="font-family: Arial;">
 <div style=" width:90%; margin-left:auto; margin-right:auto; padding:10px">
   <table width="100%" border="0" cellspacing="0" cellpadding="4">
     <tr>
         <td width="1%" valign="middle"><div><img src="img/images.png"/></div></td>
         <td colspan="3" width="100%">
             <div style="display:inline-block; padding:0px 20px">
-                <p><small><span style="font-size:20px; font-weight:bold">Synergy Central Academy Sdn Bhd (889213 - K)</span></small><br />
+                <p><small><span style="font-size:20px; font-weight:bold">KOLEJ SYNERGY <small>(L02065)</small></span></small></br>
+                <small><span style="font-size:20px; font-weight:bold">SYNERGY CENTRAL ACADEMY SDN BHD <small>(889213 - K)</small></span></small><br />
                 <small>
-                Email : support@synergycollege.edu.my<br />
+                No. 8, 10, Jalan Perai Jaya 1, Bandar Perai Jaya, 13600 Perai, Penang.<br />
+                No. 30,32,34, 36, 38, 40, 42, 44, 46, 48, Jalan Perai Jaya 4, Bandar Perai Jaya, 13600 Perai, Penang.<br>
                 <!--Tel : 04-3984787 &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp	Fax : 04-3984787<br />
                 Prai : No. 32 & 34, Jalan Perai Jaya 4, Bandar Perai Jaya, 13600 Perai, Penang.<br />
                 KL : No. 3-2, Jalan Metro Perdana Barat 2, Tmn. Usahawan Kepong, Kepong Utara, KL.<br />
                 Johor : No. 29-01, Jalan Molek 2/1, Taman Molek, 81100 Johor Bahru, Johor.-->
-                    
-                Tel : 04-3984787/04-3904189 &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp	Fax : 04-3984787<br />
-                No. 6, 8, 10, Jalan Perai Jaya 1, Bandar Perai Jaya, 13600 Perai, Penang.<br />
-                No. 32, 34, 40, 42, 44, 46, 48, Jalan Perai Jaya 4, Bandar Perai Jaya, 13600 Perai, Penang.
+                Tel : 04-3984787 &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp	Email : support@synergycollege.edu.my
+                
                 </small></p>
             </div>
         </td>
@@ -148,35 +150,47 @@ table {
     
     <tr>
         <td colspan="2">
-    <br />
-    <br />
+        <br />
+        <br />
             <table width="70%" style="border-collapse: collapse;border: 1px solid black;">
                 <tr>
                     <td align="left">
-                    Name: <?php if($row['s_name'] == ''){ echo $row['old_name'];}else{ echo $row['s_name'];}?>
+                    Name 
                     </td>
+                    <td>:<?php if($row['s_name'] == ''){ echo $row['old_name'];}else{ echo $row['s_name'];}?></td>
                 </tr>
                 <tr>
-                    <td align="left">
-                    IC: <?php if($row['s_ic'] == ''){ echo $row['ic'];}else{ echo $row['s_ic'];}?>
+                    <td align="left" style="width:100px;">
+                    IC
                     </td>
+                    <td>:<?php if($row['s_ic'] == ''){ echo $row['ic'];}else{ echo $row['s_ic'];}?></td>
                 </tr>
             </table>
-        <!-- <strong>To</strong>:<br /><?=$row_detail['cus_lname']." ".$row_detail['cus_fname']?><br /><?=$row_detail['cus_address']?><br /><?=$row_detail['cus_postcode']." ".$row_detail['cus_states']?><br /><?=$row_detail['cus_country']?>-->
+
         
         </td>
     
-        <td colspan="1" valign="bottom" width="30%" align="right">
-            <div style="<!--direction:rtl-->;text-align: left;">
-                <strong>Official Receipt </strong><br />
-                <strong>No</strong>: <?=$r_no?><br />
-                <strong>Date </strong>: <?=date_format(new DateTime($row['newdate']),'d-m-Y')?>
+        <td colspan="1" valign="bottom" width="30%" align="left">
+            <div style="text-align: right;">
+                <table>
+                    <tr>
+                        <td colspan=2 ><strong>Official Receipt </strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>No</strong></td>
+                        <td>:<?=$r_no?></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Date</strong></td>
+                        <td>:<?=date_format(new DateTime($row['newdate']),'d-m-Y')?></td>
+                    </tr>
+                </table>
             </div>
         </td>
     </tr>
   </table>
   <hr />
-    <br />
+  <br />
   
   <table width="100%" border="0" cellspacing="2" cellpadding="4" style="font-size:14px">
   
@@ -235,7 +249,7 @@ table {
 		$height = '100px';
 	}
 	
-	$total = '';
+	$total = 0;
 	while($rd_row = mysqli_fetch_array($rd_result)){
 		$str = $rd_row['rp_amount'];
 		$new_str = explode(".",$str);
@@ -254,8 +268,9 @@ table {
 		}
 		
 		
-		$total += $rd_row['rp_amount'];
+		$total += (int)$rd_row['rp_amount'];
   ?>
+  <
   <tr>
     <td align="center" class="border" colspan="2"><?=$rd_row['rp_desc']?></td>
     <td align="center" class="border"><?=$rm?></td>
@@ -263,8 +278,8 @@ table {
   </tr>
   <?php }?>
 
-  <tr style="height:<?=$height?>">
-    <td align="center" class="border" colspan="2">
+  <tr style="height:<?=$height?>" >
+    <td align="center"  class="border" style="vertical-align: bottom; padding:0;" colspan="2">
         <table width="70%" style="border-collapse: collapse;border: 1px solid black;">
         <?php
 			if($row['pay_mtd'] == 'bankin' && $row['cheque_no'] == 'BANKIN'){
@@ -324,6 +339,7 @@ table {
     <td align="center" class="border"></td>
     <td align="center" class="border"></td>
   </tr>
+ 
   <?php
   		$new_total = explode(".",$total);
 	
@@ -412,9 +428,15 @@ table {
  
 </div>
 </body>
+
 </html>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.min.js"></script>
 <script src="js/jquery.js"></script>
+<!-- html2pdf.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+
 <script>
 
 //  function demoFromHTML() {

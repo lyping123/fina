@@ -56,7 +56,7 @@ $num = mysqli_num_rows($sql);
                             }
                         }
 ?>
-
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style type="text/css" media="print">
     @page 
     {
@@ -98,7 +98,7 @@ table {
 <title>Invoice</title>
 </head>
 
-<body onLoad="window.print()" style="font-family: Arial;">
+<body id="receipt" onLoad="window.print()" style="font-family: Arial;">
 <div style=" width:90%; margin-left:auto; margin-right:auto; padding:10px">
   <table width="100%" border="0" cellspacing="0" cellpadding="4">
     <tr>
@@ -358,4 +358,17 @@ table {
  
 </div>
 </body>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const element = document.getElementById("receipt");
+      const options = {
+        margin:       0.5,
+        filename:     '<?=$r_no?> <?=$row['s_name']?>.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 1 },
+        jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+      };
+      html2pdf().set(options).from(element).save();
+    });
+  </script>
 </html>
